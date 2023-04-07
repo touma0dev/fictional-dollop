@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Meu Jogo Phaser</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser.min.js" integrity="sha512-kg6fSrg6FkD9Ua02PzuA289KatVkTp6HdiFrSKwnz1bKBeKe5JG54rNeYZeghYO/I4ka49rb9H/9Ezcq9Se3iQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  
+<script>
+var config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 235,
+  mode: Phaser.Scale.RESIZE,
+  autoCenter: Phaser.Scale.CENTER_BOTH,
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { y: 300 },
+      debug: false
+    }
+  },
+  scene: {
+    preload: preload,
+    create: create,
+    update: update
+  }
+};
+
+var game = new Phaser.Game(config);
+
+var background;
+var player;
+var cursors;
+
+function preload() {
+  // Carregue as imagens do cenário e do jogador
+  this.load.image('background', 'cenario.png'); // Substitua 'cenario.png' pelo caminho/nome da sua imagem de cenário
+  this.load.image('player', 'player.png'); // Substitua 'player.png' pelo caminho/nome da sua imagem do jogador
+}
+
+function create() {
+  // Adicione o cenário como uma imagem de fundo com física estática
+  background = this.add.image(0, 0, 'background').setOrigin(0);
+
+  // Crie o jogador
+  player = this.physics.add.sprite(100, 100, 'player'); // Posicione o jogador em (100, 100). Substitua 'player' pelo nome da sua imagem do jogador
+
+  // Defina a origem do jogador como o centro do sprite
+  player.setOrigin(0.5);
+
+  // Habilita as setas do teclado como controles do jogador
+  cursors = this.input.keyboard.createCursorKeys();
+
+  // Define o fator de rolagem (scroll factor) do cenário para levar em consideração a largura real da imagem
+  background.setScrollFactor((background.width - config.width) / (background.width - 800));
+
+  // Configura a câmera para seguir o jogador
+  this.cameras.main.startFollow(player);
+  this.cameras.main.setBounds(0, 0, background.width, config.height);
+
+  // Habilita a detecção de colisão do jogador com o mundo
+  this.physics.world.bounds.width = background.width; // Define os limites do mundo de acordo com a largura do cenário
+  player.setCollideWorldBounds(true); // Habilita a detecção de colisão do jogador com o mundo
+}
+
+function update() {
+  // Atualiza o movimento do jogador
+  player.setVelocityX(0);
+
+  if (cursors.left.isDown) {
+    player.setVelocityX(-260);
+    player.flipX = true;
+  } else if (cursors.right.isDown) {
+    player.setVelocityX(260);
+    player.flipX = false;
+  }
+}
+
+
+</script>
+</body>
+</html>
